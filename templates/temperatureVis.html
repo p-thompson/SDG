@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">   
+    </script>
+    <script>
+        tdata = {{tempdata|tojson}};
+        tempdata = tdata.data;
+        console.log((JSON.parse(tdata)).data[0]);
+        temptitle = tdata.title;
+        chartType = "LineChart";
+        containerId = "chart1";
+        options = {"title":temptitle};
+    </script>
+    <script type="text/javascript">
+        // Load the Visualization API and the corechart package
+        google.charts.load('current', {'packages':['corechart']});
+        // Set a callback for when the API is loaded
+        google.charts.setOnLoadCallback(drawChart);
+        //google.charts.setOnLoadCallback(convertJSON);
+    
+        function convertJSON() {
+            var inputData = JSON.parse(tdata.value);
+
+            var cols = [{id: timestamp, label: Timestamp, type: 'string'}, {id: tempval, label: Temperature , type: 'number'}];
+            // for (var i = 0; i < inputData.data[0].length; i++) {
+            //     cols.push({id: inputData.data[0][i], label: inputData.data[0][i], type: 'string'});
+            // }
+a
+            var rows = [];
+            for (var i = 1; i < inputData.data.length; i++) {
+                var rowData = {c: []};
+                for (var j = 0; j < inputData.data[i].length; j++) {
+                    if (j === 1) {
+                        rowData.c.push({v: inputData.data[i][j], f: inputData.data[i][j].toString()});
+                    } else {
+                        rowData.c.push({v: inputData.data[i][j]});
+                    }
+                }
+                rows.push(rowData);
+            }
+
+            var outputJSON = {
+                cols: cols,
+                rows: rows
+            };
+
+            formattedData = JSON.stringify(outputJSON, null, 2);
+            console.log("FD", formattedData)
+        }
+
+        // This is the callback function which actually draws the chart
+        function drawChart() {
+            staticDataEx = {
+            cols: [{id: 'timestamp', label: 'Timestamp', type: 'string'},
+                {id: 'temp', label: 'Temperature', type: 'number'}],
+            rows: [{c:[{v: '2023-10-26 00:21:27.772392402+00:00'}, {v: 48.96}]},
+                {c:[{v: '2023-10-26 00:21:57.776934814+00:00'}, {v: 48.94}]},
+                {c:[{v: '2023-10-26 00:22:27.772610909+00:00'}, {v: 48.94}]},
+                {c:[{v: '2023-10-26 00:22:57.779002022+00:00'}, {v:48.92}]},
+                {c:[{v: '2023-10-26 00:23:27.788983250+00:00'}, {v:48.91}]}]
+            };
+            console.log(tdata);
+            // Create a data table from the data passed into the template
+            var data = new google.visualization.DataTable(tdata,false);
+            var data = new google.visualization.DataTable(staticDataEx,false);
+            console.log(data);
+            var options = {'title':temptitle,
+                        'width':600,
+                        'height':250};
+
+            // Instantiate and draw the chart
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+      </script>
+  </head>  
+  <body>
+    <div id="chart_div"></div>
+  </body>
+</html>
